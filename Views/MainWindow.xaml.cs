@@ -8,11 +8,9 @@ namespace RKI2
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly RKIMainViewModel MVVM;
         public MainWindow()
         {
             InitializeComponent();
-            MVVM = new RKIMainViewModel();
         }
     }
 }

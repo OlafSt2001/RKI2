@@ -5,7 +5,7 @@ namespace RKI2.ViewModels
     public class LoadDataCommand : ICommand
     {
         //Da wir die Implementierung von CanExecute() und Execute() gern von außen setzen wollen,
-        //müssen wir hier etwas Fußarbeit leisten.
+        //müssen wir hier etwas Fußarbeit leisten. IoC at its best.
         private readonly Action<object?>? _Execute;
         private readonly Predicate<object?>? _canExecute;
 
