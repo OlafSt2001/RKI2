@@ -3,10 +3,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:RKI2.UserControls"
-             mc:Ignorable="d" d:DesignWidth="250" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Height="56">
+             xmlns:local="clr-namespace:RKI2.UserControls" 
+             xmlns:viewmodels="clr-namespace:RKI2.ViewModels" 
+             d:DataContext="{d:DesignInstance Type=local:UC_RKISelector}"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
+             mc:Ignorable="d" 
+             d:DesignWidth="250" 
+             Height="56">
+<!-- Warum der DataContext eine RelativeSource sein muss und was das überhaupt ist - keine Ahnung, wurde bisher
+     nirgendwo wirklich gut erklärt. Aber scheinbar sorgt das RelativeSource dafür, das das UC mit seinen
+     eigenen Properties arbeitet, nicht mit denen des ViewModels. Was ja auch Sinn macht, so ist das UC entkoppelt
+-->
     <StackPanel>
-        <Label Height="25" Margin="10,0,0,0" Content="DummyText"></Label>
-        <ComboBox Height="auto"></ComboBox>
+        <Label Height="25" Margin="0,0,0,0" Content="{Binding LabelCaption}"
+               Name="RKISelectorLabel"></Label>
+        <ComboBox Height="auto" ItemsSource="{Binding ComboBoxData}" Name="RKISelectorCombo"></ComboBox>
     </StackPanel>
 </UserControl>
