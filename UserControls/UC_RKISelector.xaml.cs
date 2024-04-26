@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 
@@ -25,12 +22,26 @@ namespace RKI2.UserControls
         #endregion
 
         #region ComboBoxData
-        private IEnumerable comboBoxData;
+        private List<string> comboBoxData;
 
-        public IEnumerable ComboBoxData
+        public List<string> ComboBoxData
         {
             get => comboBoxData;
             set => SetField(ref comboBoxData, value);
+        }
+
+        private string comboBoxSelectedItem;
+        public string ComboBoxSelectedItem
+        {
+            get => comboBoxSelectedItem;
+            set => SetField(ref comboBoxSelectedItem, value);
+        }
+
+        private int comboBoxSelectedIndex;
+        public int ComboBoxSelectedIndex
+        {
+            get => comboBoxSelectedIndex;
+            set => SetField(ref comboBoxSelectedIndex, value);
         }
         #endregion
 

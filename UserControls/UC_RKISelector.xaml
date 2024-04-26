@@ -17,6 +17,10 @@
     <StackPanel>
         <Label Height="25" Margin="0,0,0,0" Content="{Binding LabelCaption}"
                Name="RKISelectorLabel"></Label>
-        <ComboBox Height="auto" ItemsSource="{Binding ComboBoxData}" Name="RKISelectorCombo"></ComboBox>
+        <ComboBox Height="auto" ItemsSource="{Binding ComboBoxData}" 
+                  SelectedItem="{Binding ComboBoxSelectedItem}"
+                  SelectedIndex="{Binding ComboBoxSelectedIndex}"
+                  Name="RKISelectorCombo">
+        </ComboBox>
     </StackPanel>
 </UserControl>

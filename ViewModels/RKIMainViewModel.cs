@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using GeoDataDLL;
@@ -10,6 +11,32 @@ namespace RKI2.ViewModels
         private readonly GeoData GeoData;
         private readonly IDataLoader DataLoader;
         private bool DataLoaded;
+
+        #region Data for our UserControl "Bundesland"
+        private List<string> _BundeslandData;
+        public List<string> BundeslandData
+        {
+            get => _BundeslandData;
+            set => SetField(ref _BundeslandData, value);
+        }
+            
+        private string SelectedBundeslandItemItem;
+        public string SelectedBundeslandItem
+        {
+            get => SelectedBundeslandItemItem;
+            set => SetField(ref SelectedBundeslandItemItem, value);
+        }
+
+        private int _SelectedBundeslandIndex;
+        public int SelectedBundeslandIndex
+        {
+            get => _SelectedBundeslandIndex;
+            set => SetField(ref _SelectedBundeslandIndex, value);
+        }
+        #endregion
+
+        #region Data for our UserControl "Kreise"
+        #endregion
 
         public LoadDataCommand LoadData { get; set; }
 
@@ -35,6 +62,8 @@ namespace RKI2.ViewModels
 
             GeoData.LoadGeoData(GeoDataDatasource.CSVFile, @"D:\VC#\RKIConv\bin\Debug\net8.0");
             DataLoaded = true;
+            //Assign Bundesland-Stuff to our ObservableCollection
+            GeoData.GetAllBundesland().ForEach(br => this.BundeslandData.Add(br.BundeslandName));
             LoadData?.RaiseCanExecuteChanged();
         }
         #region  Implementation INotifyPropertyChanged
