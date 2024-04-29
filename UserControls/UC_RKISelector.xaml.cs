@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace RKI2.UserControls
@@ -12,43 +13,23 @@ namespace RKI2.UserControls
     {
         #region LabelCaption
         private string labelCaption = string.Empty;
-        public string LabelCaption
+        public string LabelCap
         {
             get => labelCaption;
             set => SetField(ref labelCaption, value);
             //Auf keinen Fall so (Also das Control direkt ansprechen) machen !
             //RKISelectorLabel.Content = value;
         }
+        public readonly DependencyProperty CaptionProperty = DependencyProperty.Register("LabelCaption", 
+            typeof(string), typeof(UC_RKISelector));
         #endregion
 
         #region ComboBoxData
-        private List<string> comboBoxData;
-
-        public List<string> ComboBoxData
-        {
-            get => comboBoxData;
-            set => SetField(ref comboBoxData, value);
-        }
-
-        private string comboBoxSelectedItem;
-        public string ComboBoxSelectedItem
-        {
-            get => comboBoxSelectedItem;
-            set => SetField(ref comboBoxSelectedItem, value);
-        }
-
-        private int comboBoxSelectedIndex;
-        public int ComboBoxSelectedIndex
-        {
-            get => comboBoxSelectedIndex;
-            set => SetField(ref comboBoxSelectedIndex, value);
-        }
         #endregion
 
         public UC_RKISelector()
         {
             InitializeComponent();
-            //labelCaption = string.Empty;
         }
         
         //Inhalt der Combobox muss setzbar sein

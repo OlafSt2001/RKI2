@@ -53,6 +53,10 @@ namespace RKI2.ViewModels
 
             DataLoader = new GeoDataLoader();
             GeoData = new GeoData(DataLoader);
+            _BundeslandData = Enumerable.Empty<string>().ToList();
+            _SelectedBundeslandIndex = -1;
+            SelectedBundeslandItemItem = string.Empty;
+            
         }
 
         private void LoadGeoData()

@@ -6,7 +6,6 @@
              xmlns:local="clr-namespace:RKI2.UserControls" 
              xmlns:viewmodels="clr-namespace:RKI2.ViewModels" 
              d:DataContext="{d:DesignInstance Type=local:UC_RKISelector}"
-             DataContext="{Binding RelativeSource={RelativeSource Self}}"
              mc:Ignorable="d" 
              d:DesignWidth="250" 
              Height="56">
@@ -15,12 +14,9 @@
      eigenen Properties arbeitet, nicht mit denen des ViewModels. Was ja auch Sinn macht, so ist das UC entkoppelt
 -->
     <StackPanel>
-        <Label Height="25" Margin="0,0,0,0" Content="{Binding LabelCaption}"
+        <Label Height="25" Margin="0,0,0,0" Content="{Binding Path=Text, ElementName=CaptionProperty}"
                Name="RKISelectorLabel"></Label>
-        <ComboBox Height="auto" ItemsSource="{Binding ComboBoxData}" 
-                  SelectedItem="{Binding ComboBoxSelectedItem}"
-                  SelectedIndex="{Binding ComboBoxSelectedIndex}"
-                  Name="RKISelectorCombo">
+        <ComboBox Height="auto" Name="RKISelectorCombo">
         </ComboBox>
     </StackPanel>
 </UserControl>
