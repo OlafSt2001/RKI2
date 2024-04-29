@@ -14,9 +14,10 @@
      eigenen Properties arbeitet, nicht mit denen des ViewModels. Was ja auch Sinn macht, so ist das UC entkoppelt
 -->
     <StackPanel>
-        <Label Height="25" Margin="0,0,0,0" Content="{Binding Path=Text, ElementName=CaptionProperty}"
+        <Label Height="25" Margin="0,0,0,0" Content="{Binding Path=LabelCap, ElementName=UC_RKISelector1}"
                Name="RKISelectorLabel"></Label>
-        <ComboBox Height="auto" Name="RKISelectorCombo">
+        <ComboBox Height="auto" Name="RKISelectorCombo"
+                  ItemsSource="{Binding Path=BLList, ElementName=UC_RKISelector1}">
         </ComboBox>
     </StackPanel>
 </UserControl>

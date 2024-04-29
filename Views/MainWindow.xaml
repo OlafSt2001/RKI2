@@ -25,7 +25,8 @@
         </Grid.ColumnDefinitions>
         <Button Grid.Row="0" Grid.Column="0" Content="Load Data" Command="{Binding LoadData}"/>
         <Canvas Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" Background="Aquamarine"></Canvas>
-        <uc:UC_RKISelector Grid.Row="1" Grid.Column="0" uc:LabelCap="Bundesland" />
-        <uc:UC_RKISelector Grid.Row="2" Grid.Column="0" ></uc:UC_RKISelector>
+        <uc:UC_RKISelector Grid.Row="1" Grid.Column="0" LabelCap="Issas zu fassen" 
+                           BLList="{Binding BundeslandData, Mode=TwoWay}"/>
+        <uc:UC_RKISelector Grid.Row="2" Grid.Column="0" LabelCap="Kreis"></uc:UC_RKISelector>
     </Grid>
 </Window>

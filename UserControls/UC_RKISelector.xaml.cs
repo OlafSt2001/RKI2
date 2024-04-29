@@ -20,16 +20,28 @@ namespace RKI2.UserControls
             //Auf keinen Fall so (Also das Control direkt ansprechen) machen !
             //RKISelectorLabel.Content = value;
         }
-        public readonly DependencyProperty CaptionProperty = DependencyProperty.Register("LabelCaption", 
+        public static readonly DependencyProperty CaptionProperty = DependencyProperty.Register(nameof(LabelCap), 
             typeof(string), typeof(UC_RKISelector));
         #endregion
 
         #region ComboBoxData
+
+        private List<string> _BLList;
+
+        public List<string> BLList
+        {
+            get => _BLList;
+            set => SetField(ref _BLList, value);
+        }
+
+        public static readonly DependencyProperty BLListProperty = DependencyProperty.Register(nameof(BLList), 
+            typeof(IEnumerable<string>), typeof(UC_RKISelector));
         #endregion
 
         public UC_RKISelector()
         {
             InitializeComponent();
+            _BLList = Enumerable.Empty<string>().ToList();
         }
         
         //Inhalt der Combobox muss setzbar sein
