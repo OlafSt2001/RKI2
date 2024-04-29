@@ -1,7 +1,5 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows.Input;
 using GeoDataDLL;
 
 namespace RKI2.ViewModels
@@ -68,8 +66,9 @@ namespace RKI2.ViewModels
             DataLoaded = true;
             //Assign Bundesland-Stuff to our ObservableCollection
             GeoData.GetAllBundesland().ForEach(br => this.BundeslandData.Add(br.BundeslandName));
-            LoadData?.RaiseCanExecuteChanged();
+            LoadData.RaiseCanExecuteChanged();
         }
+       
         #region  Implementation INotifyPropertyChanged
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {

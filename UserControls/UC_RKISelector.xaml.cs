@@ -26,8 +26,8 @@ namespace RKI2.UserControls
 
         #region ComboBoxData
 
+        //Liste mit Combobox-Items
         private List<string> _BLList;
-
         public List<string> BLList
         {
             get => _BLList;
@@ -36,6 +36,27 @@ namespace RKI2.UserControls
 
         public static readonly DependencyProperty BLListProperty = DependencyProperty.Register(nameof(BLList), 
             typeof(IEnumerable<string>), typeof(UC_RKISelector));
+
+        //SelectedItem
+        private object _SelItem;
+        public object cbSelectedItem
+        {
+            get => _SelItem;
+            set => SetField(ref _SelItem, value);
+        }
+        public static readonly DependencyProperty SelectedItem = DependencyProperty.Register(nameof(cbSelectedItem),
+            typeof(object), typeof(UC_RKISelector));
+
+        //SelectedIndex
+        private int _SelectedIndex;
+
+        public int cbSelectedIndex
+        {
+            get => _SelectedIndex;
+            set => SetField(ref _SelectedIndex, value);
+        }
+        public static readonly DependencyProperty SelectedIndex = DependencyProperty.Register(nameof(cbSelectedIndex),
+            typeof(int), typeof(UC_RKISelector));
         #endregion
 
         public UC_RKISelector()
