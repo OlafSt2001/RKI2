@@ -33,8 +33,8 @@ namespace RKI2.ViewModels
         }
         #endregion
 
-        #region Data for our UserControl "Kreise"
-        #endregion
+        //#region Data for our UserControl "Kreise"
+        //#endregion
 
         public LoadDataCommand LoadData { get; set; }
 
