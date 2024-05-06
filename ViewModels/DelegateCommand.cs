@@ -2,7 +2,7 @@
 
 namespace RKI2.ViewModels
 {
-    public class LoadDataCommand : ICommand
+    public class DelegateCommand : ICommand
     {
         //Da wir die Implementierung von CanExecute() und Execute() gern von außen setzen wollen,
         //müssen wir hier etwas Fußarbeit leisten. IoC at its best.
@@ -11,18 +11,18 @@ namespace RKI2.ViewModels
 
         //Beim Constructor-Aufruf geben wir die beiden Methoden an, die bei Execute/CanExecute
         //ausgeführt werden sollen
-        //public LoadDataCommand(Action<object> Execute, Predicate<object> canExecute)
+        //public DelegateCommand(Action<object> Execute, Predicate<object> canExecute)
         //{
         //    this.Execute = Execute;
         //    this.canExecute = canExecute;
         //}
         //Modernes C#:
-        public LoadDataCommand(Action<object?> execute, Predicate<object?>? canExecute) =>
+        public DelegateCommand(Action<object?> execute, Predicate<object?>? canExecute) =>
             (this._Execute, this._canExecute) = (execute, canExecute);
 
         //Komfort: Wenn wir kein CanExecute brauchen, machen wir einen Bonus-Konstruktor, wo
         //wir eben kein canExecute-Methödchen mitgeben müssen
-        public LoadDataCommand(Action<object?> execute) : this(execute, null)
+        public DelegateCommand(Action<object?> execute) : this(execute, null)
         {
 
         }

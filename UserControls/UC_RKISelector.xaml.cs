@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
 
 namespace RKI2.UserControls
 {
@@ -27,14 +28,14 @@ namespace RKI2.UserControls
         #region ComboBoxData
 
         //Liste mit Combobox-Items
-        private List<string> _BLList;
-        public List<string> BLList
+        private List<string> _ItemList;
+        public List<string> ItemList
         {
-            get => _BLList;
-            set => SetField(ref _BLList, value);
+            get => ItemList;
+            set => SetField(ref _ItemList, value);
         }
 
-        public static readonly DependencyProperty BLListProperty = DependencyProperty.Register(nameof(BLList), 
+        public static readonly DependencyProperty ItemListProperty = DependencyProperty.Register(nameof(ItemList), 
             typeof(IEnumerable<string>), typeof(UC_RKISelector));
 
         //SelectedItem
@@ -57,12 +58,33 @@ namespace RKI2.UserControls
         }
         public static readonly DependencyProperty SelectedIndex = DependencyProperty.Register(nameof(cbSelectedIndex),
             typeof(int), typeof(UC_RKISelector));
+
+        //SelectionChanged
+        /* This shit doesn't work
+        public object SelectionChanged
+        {
+            get => (object)GetValue(SelectionChangedProperty);
+            set => SetValue(SelectionChangedProperty, value);
+        }
+
+
+        public static readonly DependencyProperty SelectionChangedProperty = DependencyProperty.Register(nameof(SelectionChanged),
+            typeof(int), typeof(UC_RKISelector),
+            new PropertyMetadata(-1, OnValuePropertyChanged));
+
+        private static void OnValuePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var cb = d as ComboBox;
+            cb?.SetValue(e.Property, (int)e.NewValue);
+        }
+        */
         #endregion
 
         public UC_RKISelector()
         {
             InitializeComponent();
-            _BLList = Enumerable.Empty<string>().ToList();
+            _ItemList = Enumerable.Empty<string>().ToList();
+            _SelItem = new object();
         }
         
         //Inhalt der Combobox muss setzbar sein

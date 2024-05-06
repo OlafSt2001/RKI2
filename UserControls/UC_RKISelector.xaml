@@ -17,9 +17,10 @@
         <Label Height="25" Margin="0,0,0,0" Content="{Binding Path=LabelCap, ElementName=UC_RKISelector1}"
                Name="RKISelectorLabel"></Label>
         <ComboBox Height="auto" Name="RKISelectorCombo"
-                  ItemsSource="{Binding Path=BLList, ElementName=UC_RKISelector1}"
+                  ItemsSource="{Binding Path=ItemList, ElementName=UC_RKISelector1}"
                   SelectedItem="{Binding Path=cbSelectedItem, ElementName=UC_RKISelector1}"
-                  SelectedIndex="{Binding Path=cbSelectedIndex, ElementName=UC_RKISelector1}">
+                  SelectedIndex="{Binding Path=cbSelectedIndex, ElementName=UC_RKISelector1}"
+                  >
         </ComboBox>
     </StackPanel>
 </UserControl>

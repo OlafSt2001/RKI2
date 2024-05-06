@@ -36,18 +36,36 @@ namespace RKI2.ViewModels
         //#region Data for our UserControl "Kreise"
         //#endregion
 
-        public LoadDataCommand LoadData { get; set; }
+        public DelegateCommand LoadData { get; set; }
+        public DelegateCommand BundeslandChanged { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public RKIMainViewModel()
+        private void SetupButtonHandlers()
         {
             DataLoaded = false; //Haben ja noch nichts geladen
             //Events für Load-Button. Hier lösen wir erstmal das Laden der Bundesländer etc. aus
             //später müssen das natürlich Inzidenzdaten sein (historisch, neue gibts leider keine mehr)
-            LoadData = new LoadDataCommand(
+            LoadData = new DelegateCommand(
                 (o) => LoadGeoData(),
                 (o) => !DataLoaded);
+        }
+
+        private void SetupBundeslandHandlers()
+        {
+            //As long as the shit in UC doesn't work, this will stay empty
+        }
+
+        private void SetupKreisHandlers()
+        {
+            //Not yet implemented
+        }
+
+        public RKIMainViewModel()
+        {
+            SetupButtonHandlers();
+            SetupBundeslandHandlers();
+            SetupKreisHandlers();
 
             DataLoader = new GeoDataLoader();
             GeoData = new GeoData(DataLoader);
