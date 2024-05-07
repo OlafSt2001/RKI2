@@ -9,10 +9,6 @@
              mc:Ignorable="d" 
              d:DesignWidth="250" 
              Height="56">
-<!-- Warum der DataContext eine RelativeSource sein muss und was das überhaupt ist - keine Ahnung, wurde bisher
-     nirgendwo wirklich gut erklärt. Aber scheinbar sorgt das RelativeSource dafür, das das UC mit seinen
-     eigenen Properties arbeitet, nicht mit denen des ViewModels. Was ja auch Sinn macht, so ist das UC entkoppelt
--->
     <StackPanel>
         <Label Height="25" Margin="0,0,0,0" Content="{Binding Path=LabelCap, ElementName=UC_RKISelector1}"
                Name="RKISelectorLabel"></Label>

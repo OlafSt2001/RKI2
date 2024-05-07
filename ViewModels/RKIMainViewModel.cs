@@ -9,6 +9,11 @@ namespace RKI2.ViewModels
         private readonly GeoData GeoData;
         private readonly IDataLoader DataLoader;
         private bool DataLoaded;
+        //Handler für unseren Button
+        public DelegateCommand LoadData { get; private set; }
+        //Für INotifyPropertyChanged benötigt
+        public event PropertyChangedEventHandler? PropertyChanged;
+
 
         #region Data for our UserControl "Bundesland"
         private List<string> _BundeslandData;
@@ -37,17 +42,66 @@ namespace RKI2.ViewModels
             {
                 SetField(ref _SelectedBundeslandIndex, value);
                 //Oder hier mehr Zeuh für Landkreis-Combo
+                FillLandkreisCombo(_SelectedBundeslandIndex);
+            }
+        }
+        #endregion
+
+        #region Data for our UserControl "Kreise"
+        private int _SelectedLandkreisIndex;
+        public int SelectedLandKreisIndex
+        {
+            get => _SelectedLandkreisIndex;
+            set
+            {
+                SetField(ref _SelectedLandkreisIndex, value);
+                //Landkreis zeichnen. Achtung: Durch das eingefügte (kein) muss vom Index
+                //eins abgezogen werden, um den korrekten Index in LandkreisData-List zu
+                //bekommen !
             }
         }
 
+        private List<string> _LandkreisData;
+        public List<string> LandkreisData
+        {
+            get => _LandkreisData;
+            set => SetField(ref _LandkreisData, value);
+        }
         #endregion
 
-        //#region Data for our UserControl "Kreise"
-        //#endregion
+        #region Constructor
+        #pragma warning disable CS8618
+        public RKIMainViewModel()
+        #pragma warning restore CS8618
+        {
+            SetupButtonHandlers();
 
-        public DelegateCommand LoadData { get; private set; }
+            DataLoader = new GeoDataLoader();
+            GeoData = new GeoData(DataLoader);
+            _BundeslandData = Enumerable.Empty<string>().ToList();
+            _BundeslandData.Add("(kein)");
+            _SelectedBundeslandIndex = -1;
+            SelectedBundeslandItemItem = string.Empty;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+            _LandkreisData = Enumerable.Empty<string>().ToList();
+            _SelectedLandkreisIndex = -1;
+        }
+        #endregion
+        
+        private void FillLandkreisCombo(int bundeslandIndex)
+        {
+            _LandkreisData.Clear();
+            if (bundeslandIndex == 0)
+            {
+                //(kein) ausgewählt
+                //Deutschlandkarte zeichnen
+                return;
+            }
+            _LandkreisData.Add("(kein)");
+            var p = GeoData.GetAllKreisForBundesland(bundeslandIndex);
+            p.ForEach(kr => _LandkreisData.Add(kr.KreisName));
+            OnPropertyChanged(nameof(LandkreisData));
+        }
 
         private void SetupButtonHandlers()
         {
@@ -59,23 +113,6 @@ namespace RKI2.ViewModels
                 (o) => !DataLoaded);
         }
 
-        private void SetupKreisHandlers()
-        {
-            //Not yet implemented
-        }
-
-        public RKIMainViewModel()
-        {
-            SetupButtonHandlers();
-            SetupKreisHandlers();
-
-            DataLoader = new GeoDataLoader();
-            GeoData = new GeoData(DataLoader);
-            _BundeslandData = Enumerable.Empty<string>().ToList();
-            _SelectedBundeslandIndex = -1;
-            SelectedBundeslandItemItem = string.Empty;
-        }
-
         private void LoadGeoData()
         {
             if (DataLoaded) 
@@ -83,8 +120,11 @@ namespace RKI2.ViewModels
 
             GeoData.LoadGeoData(GeoDataDatasource.CSVFile, @"D:\VC#\RKIConv\bin\Debug\net8.0");
             DataLoaded = true;
-            //Assign Bundesland-Stuff to our ObservableCollection
-            GeoData.GetAllBundesland().ForEach(br => this.BundeslandData.Add(br.BundeslandName));
+            //Assign Bundesland-Stuff to our Binding property
+            GeoData.GetAllBundesland().ForEach(br => _BundeslandData.Add(br.BundeslandName));
+            //Tell everyone that this prop has changed
+            OnPropertyChanged(nameof(BundeslandData));
+            //Tell everyone that we have data
             LoadData.RaiseCanExecuteChanged();
         }
        
@@ -96,7 +136,7 @@ namespace RKI2.ViewModels
         }
 
         //Deas hier hat sich mir noch nicht so recht erschlossen, habe aber so eine Ahnung
-        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+        private bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value)) 
                 return false;

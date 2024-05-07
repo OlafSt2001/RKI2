@@ -13,7 +13,7 @@ namespace RKI2.UserControls
     public partial class UC_RKISelector : UserControl, INotifyPropertyChanged
     {
         #region LabelCaption
-        private string labelCaption = string.Empty;
+        private string labelCaption;
         public string LabelCap
         {
             get => labelCaption;
@@ -83,12 +83,12 @@ namespace RKI2.UserControls
         public UC_RKISelector()
         {
             InitializeComponent();
+            labelCaption = string.Empty;
             _ItemList = Enumerable.Empty<string>().ToList();
             _SelItem = new object();
         }
-        
-        //Inhalt der Combobox muss setzbar sein
-        //Wenn Combo-Selektion verändert, muss ein Command dranhängbar sein
+
+        #region INotifyPropertyChanged-Implementation
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
@@ -103,5 +103,6 @@ namespace RKI2.UserControls
             OnPropertyChanged(propertyName);
             return true;
         }
+        #endregion
     }
 }

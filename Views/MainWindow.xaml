@@ -35,6 +35,10 @@
             entsprechend gehandelt werden -> Die Liste mit Landkreisen gefüllt werden
             -->
         </uc:UC_RKISelector>
-        <uc:UC_RKISelector Grid.Row="2" Grid.Column="0" LabelCap="Landkreise"></uc:UC_RKISelector>
+        <uc:UC_RKISelector Grid.Row="2" Grid.Column="0" LabelCap="Landkreise"
+                           ItemList="{Binding LandkreisData}"
+                           cbSelectedIndex="{Binding SelectedLandKreisIndex, Mode=TwoWay}"
+                           >
+        </uc:UC_RKISelector>
     </Grid>
 </Window>
