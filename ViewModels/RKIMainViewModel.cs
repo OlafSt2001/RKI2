@@ -22,22 +22,30 @@ namespace RKI2.ViewModels
         public string SelectedBundeslandItem
         {
             get => SelectedBundeslandItemItem;
-            set => SetField(ref SelectedBundeslandItemItem, value);
+            set
+            {
+                SetField(ref SelectedBundeslandItemItem, value);
+                //Hier mehr Zeug für Landkreis-Combo
+            }
         }
 
         private int _SelectedBundeslandIndex;
         public int SelectedBundeslandIndex
         {
             get => _SelectedBundeslandIndex;
-            set => SetField(ref _SelectedBundeslandIndex, value);
+            set
+            {
+                SetField(ref _SelectedBundeslandIndex, value);
+                //Oder hier mehr Zeuh für Landkreis-Combo
+            }
         }
+
         #endregion
 
         //#region Data for our UserControl "Kreise"
         //#endregion
 
-        public DelegateCommand LoadData { get; set; }
-        public DelegateCommand BundeslandChanged { get; set; }
+        public DelegateCommand LoadData { get; private set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -51,11 +59,6 @@ namespace RKI2.ViewModels
                 (o) => !DataLoaded);
         }
 
-        private void SetupBundeslandHandlers()
-        {
-            //As long as the shit in UC doesn't work, this will stay empty
-        }
-
         private void SetupKreisHandlers()
         {
             //Not yet implemented
@@ -64,7 +67,6 @@ namespace RKI2.ViewModels
         public RKIMainViewModel()
         {
             SetupButtonHandlers();
-            SetupBundeslandHandlers();
             SetupKreisHandlers();
 
             DataLoader = new GeoDataLoader();
@@ -72,7 +74,6 @@ namespace RKI2.ViewModels
             _BundeslandData = Enumerable.Empty<string>().ToList();
             _SelectedBundeslandIndex = -1;
             SelectedBundeslandItemItem = string.Empty;
-            
         }
 
         private void LoadGeoData()

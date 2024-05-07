@@ -60,7 +60,7 @@ namespace RKI2.UserControls
             typeof(int), typeof(UC_RKISelector));
 
         //SelectionChanged
-        /* This shit doesn't work
+        //This shit doesn't work
         public object SelectionChanged
         {
             get => (object)GetValue(SelectionChangedProperty);
@@ -77,7 +77,7 @@ namespace RKI2.UserControls
             var cb = d as ComboBox;
             cb?.SetValue(e.Property, (int)e.NewValue);
         }
-        */
+        
         #endregion
 
         public UC_RKISelector()
