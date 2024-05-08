@@ -16,7 +16,7 @@
                   ItemsSource="{Binding Path=ItemList, ElementName=UC_RKISelector1}"
                   SelectedItem="{Binding Path=cbSelectedItem, ElementName=UC_RKISelector1}"
                   SelectedIndex="{Binding Path=cbSelectedIndex, ElementName=UC_RKISelector1}"
-                  >
+        >
         </ComboBox>
     </StackPanel>
 </UserControl>

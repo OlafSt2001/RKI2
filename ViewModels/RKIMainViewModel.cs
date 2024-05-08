@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using GeoDataDLL;
 
 namespace RKI2.ViewModels
@@ -11,6 +12,8 @@ namespace RKI2.ViewModels
         private bool DataLoaded;
         //Handler für unseren Button
         public DelegateCommand LoadData { get; private set; }
+        public DelegateCommand ExitCommand { get; private set; }
+
         //Für INotifyPropertyChanged benötigt
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -111,6 +114,8 @@ namespace RKI2.ViewModels
             LoadData = new DelegateCommand(
                 (o) => LoadGeoData(),
                 (o) => !DataLoaded);
+
+            ExitCommand = new DelegateCommand((o) => Application.Current.Shutdown(0));
         }
 
         private void LoadGeoData()

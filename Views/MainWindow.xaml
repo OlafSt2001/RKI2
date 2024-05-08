@@ -14,7 +14,7 @@
     </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30" Name="ButtonRow"></RowDefinition>
+            <RowDefinition Height="60" Name="ButtonRow"></RowDefinition>
             <RowDefinition Height="60" Name="BundeslandRow" ></RowDefinition>
             <RowDefinition Height="50" Name="KreisRow"></RowDefinition>
             <RowDefinition Height="*" Name="LegendRow"></RowDefinition>
@@ -23,8 +23,10 @@
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Button Grid.Row="0" Grid.Column="0" Content="Load Data" Command="{Binding LoadData}"/>
-        <Canvas Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" Background="Aquamarine"></Canvas>
+        <StackPanel Grid.Row="0">
+            <Button Height="25" Content="Load Data" Command="{Binding LoadData}" Margin="0,0,0,5"/>
+            <Button Height="25" Content="Exit" Command="{Binding ExitCommand}" Margin="0,0,0,5"/>
+        </StackPanel>
         <uc:UC_RKISelector Grid.Row="1" Grid.Column="0" LabelCap="Bundesländer" 
                            ItemList="{Binding BundeslandData, Mode=TwoWay}"
                            cbSelectedIndex="{Binding SelectedBundeslandIndex, Mode=TwoWay}"
@@ -40,5 +42,10 @@
                            cbSelectedIndex="{Binding SelectedLandKreisIndex, Mode=TwoWay}"
                            >
         </uc:UC_RKISelector>
+        <StackPanel Grid.Column="0" Grid.Row="3" VerticalAlignment="Bottom">
+            <!-- Hier kommt unsere Legende rein -->
+        </StackPanel>
+        <Canvas Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" Background="Aquamarine"></Canvas>
+
     </Grid>
 </Window>
