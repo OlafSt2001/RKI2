@@ -11,12 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="GeoDataDLL">
-      <HintPath>..\GeoDataDLL\bin\x86\Debug\net8.0\GeoDataDLL.dll</HintPath>
+      <HintPath>..\GeoDataDLL\bin\Any CPU\Debug\net8.0\GeoDataDLL.dll</HintPath>
     </Reference>
   </ItemGroup>
 

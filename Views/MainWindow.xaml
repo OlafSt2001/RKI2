@@ -42,8 +42,16 @@
                            cbSelectedIndex="{Binding SelectedLandKreisIndex, Mode=TwoWay}"
                            >
         </uc:UC_RKISelector>
-        <StackPanel Grid.Column="0" Grid.Row="3" VerticalAlignment="Bottom">
-            <!-- Hier kommt unsere Legende rein -->
+        <!-- Hier kommt unsere Legende -->
+        <StackPanel Grid.Row="3" Margin="1,5,1,1">
+        <Label Grid.Row="3" Content="Legende"></Label>
+        <ListView Grid.Row="3" ItemsSource="{Binding Inzidenzen}" HorizontalContentAlignment="Stretch" SelectionMode="Single">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock HorizontalAlignment="Stretch" Text="{Binding InzidenzRangeText}" Background="{Binding InzidenzColor}" FontSize="16"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
         </StackPanel>
         <Canvas Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" Background="Aquamarine"></Canvas>
 

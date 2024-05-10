@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Media;
 using GeoDataDLL;
+using RKI2.Models;
 
 namespace RKI2.ViewModels
 {
@@ -72,6 +74,15 @@ namespace RKI2.ViewModels
         }
         #endregion
 
+        #region Data for our Legend
+        private List<LegendItem> _Inzidenzen = [];
+        public List<LegendItem> Inzidenzen
+        {
+            get => _Inzidenzen;
+            set => SetField(ref _Inzidenzen, value);
+        }
+        #endregion
+
         #region Constructor
         #pragma warning disable CS8618
         public RKIMainViewModel()
@@ -88,6 +99,16 @@ namespace RKI2.ViewModels
 
             _LandkreisData = Enumerable.Empty<string>().ToList();
             _SelectedLandkreisIndex = -1;
+
+            var li = new LegendItem
+            {
+                InzidenzColor = Brushes.GreenYellow,
+                InzidenzMin = 0,
+                InzidenzMax = 5,
+                InzidenzRangeText = "bis 5"
+            };
+            _Inzidenzen.Add(li);
+
         }
         #endregion
         
@@ -123,7 +144,7 @@ namespace RKI2.ViewModels
             if (DataLoaded) 
                 return;
 
-            GeoData.LoadGeoData(GeoDataDatasource.CSVFile, @"D:\VC#\RKIConv\bin\Debug\net8.0");
+            GeoData.LoadGeoData(@"D:\VC#\RKIConv\bin\Debug\net8.0");
             DataLoaded = true;
             //Assign Bundesland-Stuff to our Binding property
             GeoData.GetAllBundesland().ForEach(br => _BundeslandData.Add(br.BundeslandName));

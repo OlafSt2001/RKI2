@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-using System.Windows;
-using RKI2.ViewModels;
+﻿using System.Windows;
 
 namespace RKI2
 {
