@@ -2,8 +2,11 @@
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
+using DataDLLInterfaces;
 using GeoDataDLL;
+using InzidenzDataDLL;
 using RKI2.Models;
+using BundeslandRecord = DataDLLInterfaces.BundeslandRecord;
 
 namespace RKI2.ViewModels
 {
@@ -12,6 +15,10 @@ namespace RKI2.ViewModels
         private readonly GeoData GeoData;
         private readonly IDataLoader DataLoader;
         private bool DataLoaded;
+        //Inzidenzen
+        private readonly IKreisValues KreisData;
+        private int MinKreisId;
+        private int MaxKreisId;
         //Handler für unseren Button
         public DelegateCommand LoadData { get; private set; }
         public DelegateCommand ExitCommand { get; private set; }
@@ -90,6 +97,7 @@ namespace RKI2.ViewModels
         {
             SetupButtonHandlers();
 
+            //Setup Map Data and Bundesland- and KreisData
             DataLoader = new GeoDataLoader();
             GeoData = new GeoData(DataLoader);
             _BundeslandData = Enumerable.Empty<string>().ToList();
@@ -99,6 +107,12 @@ namespace RKI2.ViewModels
 
             _LandkreisData = Enumerable.Empty<string>().ToList();
             _SelectedLandkreisIndex = -1;
+
+            //Setup InzidenzData, this only for testing
+            KreisData = new InzidenzData();
+            KreisData.VisualizeData = new();
+
+            KreisData.LoadData(@"Z:\Temp\01062023.csv");
 
             var li = new LegendItem
             {
@@ -111,7 +125,16 @@ namespace RKI2.ViewModels
 
         }
         #endregion
-        
+
+        private void GetMinMaxKreisID()
+        {
+            var BL = GeoData.GetAllBundesland();
+            int MaxBLID = BL.Select(br => br.BundeslandId).Max();
+            int MinBLID = BL.Select(br => br.BundeslandId).Min();
+            MinKreisId = GeoData.GetAllKreisForBundesland(MinBLID).Select(kr => kr.KreisId).Min();
+            MaxKreisId = GeoData.GetAllKreisForBundesland(MaxBLID).Select(kr => kr.KreisId).Max();
+        }
+
         private void FillLandkreisCombo(int bundeslandIndex)
         {
             _LandkreisData.Clear();
@@ -148,6 +171,8 @@ namespace RKI2.ViewModels
             DataLoaded = true;
             //Assign Bundesland-Stuff to our Binding property
             GeoData.GetAllBundesland().ForEach(br => _BundeslandData.Add(br.BundeslandName));
+            //Get MinMaxIds for Kreise
+            GetMinMaxKreisID();
             //Tell everyone that this prop has changed
             OnPropertyChanged(nameof(BundeslandData));
             //Tell everyone that we have data
