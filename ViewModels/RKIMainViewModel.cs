@@ -14,11 +14,20 @@ namespace RKI2.ViewModels
     {
         private readonly GeoData GeoData;
         private readonly IDataLoader DataLoader;
+
         private bool DataLoaded;
+
         //Inzidenzen
         private readonly IKreisValues KreisData;
         private int MinKreisId;
+
         private int MaxKreisId;
+
+        //Für Legende
+        private const int MAX_LEGEND_COUNT = 12;
+        private SolidColorBrush br = new (Color.FromArgb(0xFF, 0xB0, 0, 0));
+        private readonly List<SolidColorBrush> LegendColors;
+
         //Handler für unseren Button
         public DelegateCommand LoadData { get; private set; }
         public DelegateCommand ExitCommand { get; private set; }
@@ -55,6 +64,7 @@ namespace RKI2.ViewModels
                 SetField(ref _SelectedBundeslandIndex, value);
                 //Oder hier mehr Zeuh für Landkreis-Combo
                 FillLandkreisCombo(_SelectedBundeslandIndex);
+                DrawMap(_SelectedBundeslandIndex, -1);
             }
         }
         #endregion
@@ -113,27 +123,67 @@ namespace RKI2.ViewModels
             KreisData.VisualizeData = new();
 
             KreisData.LoadData(@"Z:\Temp\01062023.csv");
-
-            var li = new LegendItem
+            MinKreisId = KreisData.VisualizeData.Min(dr => dr.Id);
+            MaxKreisId = KreisData.VisualizeData.Max(dr => dr.Id);
+            //Legendenfarben intialisieren. Wegen einer benutzerdefinierten Farbe können wir das nicht in der
+            //Deklaration machen, der Compiler weigert sich standhaft
+            LegendColors = new List<SolidColorBrush>(MAX_LEGEND_COUNT)
             {
-                InzidenzColor = Brushes.GreenYellow,
-                InzidenzMin = 0,
-                InzidenzMax = 5,
-                InzidenzRangeText = "bis 5"
+                Brushes.Green,
+                Brushes.GreenYellow,
+                Brushes.BurlyWood,
+                Brushes.Silver,
+                Brushes.SlateGray,
+                Brushes.PeachPuff,
+                Brushes.Coral,
+                Brushes.Red,
+                br,
+                Brushes.DarkRed,
+                Brushes.DarkOrchid,
+                Brushes.DarkSlateBlue
             };
-            _Inzidenzen.Add(li);
+            SetupInzidenzData();
+        }
 
+        private void SetupInzidenzData()
+        {
+            _Inzidenzen.Clear();
+            double minVal, finalMinVal = double.MaxValue;
+            double maxVal, finalMaxVal = double.MinValue;
+            for (int i = MinKreisId; i < MaxKreisId; i++)
+            {
+                (minVal, maxVal) = KreisData.GetMinMaxValueForKreis(i);
+                if (double.IsNaN(minVal))
+                    continue;
+                if (minVal < finalMinVal)
+                    finalMinVal = minVal;
+                if (maxVal > finalMaxVal)
+                    finalMaxVal = maxVal;
+            }
+
+            double step = (finalMaxVal - finalMinVal) / (double)MAX_LEGEND_COUNT;
+            for (int i = 0; i < MAX_LEGEND_COUNT; i++)
+            {
+                LegendItem li = new()
+                {
+                    InzidenzMin = i * step,
+                    InzidenzMax = (i + 1) * step,
+                    InzidenzColor = LegendColors[i]
+                };
+                li.InzidenzRangeText = $"{li.InzidenzMin:F2}...{li.InzidenzMax:F2}";
+                _Inzidenzen.Add(li);
+            }
         }
         #endregion
 
         private void GetMinMaxKreisID()
-        {
-            var BL = GeoData.GetAllBundesland();
-            int MaxBLID = BL.Select(br => br.BundeslandId).Max();
-            int MinBLID = BL.Select(br => br.BundeslandId).Min();
-            MinKreisId = GeoData.GetAllKreisForBundesland(MinBLID).Select(kr => kr.KreisId).Min();
-            MaxKreisId = GeoData.GetAllKreisForBundesland(MaxBLID).Select(kr => kr.KreisId).Max();
-        }
+            {
+                var BL = GeoData.GetAllBundesland();
+                int MaxBLID = BL.Select(br => br.BundeslandId).Max();
+                int MinBLID = BL.Select(br => br.BundeslandId).Min();
+                MinKreisId = GeoData.GetAllKreisForBundesland(MinBLID).Select(kr => kr.KreisId).Min();
+                MaxKreisId = GeoData.GetAllKreisForBundesland(MaxBLID).Select(kr => kr.KreisId).Max();
+            }
 
         private void FillLandkreisCombo(int bundeslandIndex)
         {
@@ -178,7 +228,41 @@ namespace RKI2.ViewModels
             //Tell everyone that we have data
             LoadData.RaiseCanExecuteChanged();
         }
-       
+
+        #region Map zeichnen
+        private void DrawMap(int BLID, int KRID)
+        {
+            if (BLID < 1) //Ganz Deutschland
+            {
+                DrawFullMap();
+                return;
+            }
+
+            if (KRID < 1)
+            {
+                DrawBundesland(BLID);
+                return;
+            }
+
+            DrawKreis(KRID);
+        }
+
+        private void DrawFullMap()
+        {
+            //Not yet implemented
+        }
+
+        private void DrawBundesland(int BLID)
+        {
+            //Not yet implemented
+        }
+
+        private void DrawKreis(int KRID)
+        {
+            //Not yet implemented
+        }
+        #endregion
+
         #region  Implementation INotifyPropertyChanged
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
@@ -186,17 +270,17 @@ namespace RKI2.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        //Deas hier hat sich mir noch nicht so recht erschlossen, habe aber so eine Ahnung
         private bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
+            //Hat sich wirklich was geändert ? Wenn nicht, dann gleich wieder raus hier
             if (EqualityComparer<T>.Default.Equals(field, value)) 
                 return false;
 
+            //Wert eintragen und PropertyChanged auslösen
             field = value;
             OnPropertyChanged(propertyName);
             return true;
         }
         #endregion
-
     }
 }
