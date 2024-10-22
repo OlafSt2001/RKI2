@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
@@ -6,7 +7,7 @@ using DataDLLInterfaces;
 using GeoDataDLL;
 using InzidenzDataDLL;
 using RKI2.Models;
-using BundeslandRecord = DataDLLInterfaces.BundeslandRecord;
+//using BundeslandRecord = DataDLLInterfaces.BundeslandRecord;
 
 namespace RKI2.ViewModels
 {
@@ -64,6 +65,9 @@ namespace RKI2.ViewModels
                 SetField(ref _SelectedBundeslandIndex, value);
                 //Oder hier mehr Zeuh für Landkreis-Combo
                 FillLandkreisCombo(_SelectedBundeslandIndex);
+                //Process Legend here !!!
+                SetupBundeslandInzidenzData(value);
+                OnPropertyChanged(nameof(Inzidenzen));
                 DrawMap(_SelectedBundeslandIndex, -1);
             }
         }
@@ -122,7 +126,7 @@ namespace RKI2.ViewModels
             KreisData = new InzidenzData();
             KreisData.VisualizeData = new();
 
-            KreisData.LoadData(@"Z:\Temp\01062023.csv");
+            KreisData.LoadData(@"Z:\Temp\01122021.csv");
             MinKreisId = KreisData.VisualizeData.Min(dr => dr.Id);
             MaxKreisId = KreisData.VisualizeData.Max(dr => dr.Id);
             //Legendenfarben intialisieren. Wegen einer benutzerdefinierten Farbe können wir das nicht in der
@@ -142,37 +146,75 @@ namespace RKI2.ViewModels
                 Brushes.DarkOrchid,
                 Brushes.DarkSlateBlue
             };
-            SetupInzidenzData();
+            SetupFullInzidenzData();
         }
 
-        private void SetupInzidenzData()
+        private LegendItem CreateLegendItem(double MinVal, double MaxVal, int ColorIndex)
         {
-            _Inzidenzen.Clear();
-            double minVal, finalMinVal = double.MaxValue;
-            double maxVal, finalMaxVal = double.MinValue;
-            for (int i = MinKreisId; i < MaxKreisId; i++)
+            return new LegendItem
             {
-                (minVal, maxVal) = KreisData.GetMinMaxValueForKreis(i);
-                if (double.IsNaN(minVal))
-                    continue;
-                if (minVal < finalMinVal)
-                    finalMinVal = minVal;
-                if (maxVal > finalMaxVal)
-                    finalMaxVal = maxVal;
-            }
+                InzidenzMin = MinVal,
+                InzidenzMax = MaxVal,
+                InzidenzColor = LegendColors[ColorIndex],
+                InzidenzRangeText = $"{MinVal:F0}...{MaxVal:F0}"
+            };
+        }
+        private void CalculateLegend(double MinVal, double MaxVal, bool IsSingleLegendItem = false)
+        {
+            //Lineare Verteilung
+            var liList = new List<LegendItem>();
 
-            double step = (finalMaxVal - finalMinVal) / (double)MAX_LEGEND_COUNT;
-            for (int i = 0; i < MAX_LEGEND_COUNT; i++)
+            if (IsSingleLegendItem)
+                liList.Add(CreateLegendItem(MinVal, MaxVal, 0));
+            else
             {
-                LegendItem li = new()
+                var step = (MaxVal - MinVal) / (double)MAX_LEGEND_COUNT;
+                for (var i = 0; i < MAX_LEGEND_COUNT; i++)
                 {
-                    InzidenzMin = i * step,
-                    InzidenzMax = (i + 1) * step,
-                    InzidenzColor = LegendColors[i]
-                };
-                li.InzidenzRangeText = $"{li.InzidenzMin:F2}...{li.InzidenzMax:F2}";
-                _Inzidenzen.Add(li);
+
+                    var li = CreateLegendItem(i * step, (i + 1) * step, i);
+                    liList.Add(li);
+                }
             }
+            Inzidenzen = liList;
+        }
+
+        private void SetupFullInzidenzData()
+        {
+            double finalMinVal = double.MaxValue;
+            double finalMaxVal = double.MinValue;
+            for (int i = MinKreisId; i < MaxKreisId; i++)
+                (finalMinVal, finalMaxVal) = GetFinalMinMaxVal(i, finalMinVal, finalMaxVal);
+            CalculateLegend(finalMinVal, finalMaxVal);
+        }
+
+        private (double minVal, double maxVal) GetFinalMinMaxVal(int KreisId, double finalMinVal, double finalMaxVal)
+        {
+            (double minV, double maxV) = KreisData.GetMinMaxValueForKreis(KreisId);
+            if (double.IsNaN(minV))
+                return (double.MinValue, double.MaxValue);
+            if (minV < finalMinVal)
+                finalMinVal = minV;
+            if (maxV > finalMaxVal)
+                finalMaxVal = maxV;
+            return (finalMinVal, finalMaxVal);
+        }
+
+        private void SetupBundeslandInzidenzData(int BLID)
+        {
+            var p = GeoData.GetAllKreisForBundesland(BLID);
+            var KreisIds = p.Select(kr => kr.KreisId).ToList();
+            double finalMinVal = double.MaxValue;
+            double finalMaxVal = double.MinValue;
+            //Wenn wir nur einen Landkreis haben (HH z.B.) dann direkt berechnen
+            if (KreisIds.Count() == 1)
+                (finalMinVal, finalMaxVal) = GetFinalMinMaxVal(KreisIds[0], finalMinVal, finalMaxVal);
+            else
+            //Ansonsten halt über alle Kreise
+                for (var i = KreisIds.Min(KRID => KRID); i < KreisIds.Max(KRID => KRID); i++)
+                    (finalMinVal, finalMaxVal) = GetFinalMinMaxVal(i, finalMinVal, finalMaxVal);
+
+            CalculateLegend(finalMinVal, finalMaxVal);
         }
         #endregion
 
