@@ -96,8 +96,8 @@ namespace RKI2.ViewModels
         #endregion
 
         #region Data for our Legend
-        private List<LegendItem> _Inzidenzen = [];
-        public List<LegendItem> Inzidenzen
+        private IEnumerable<LegendItem> _Inzidenzen = [];
+        public IEnumerable<LegendItem> Inzidenzen
         {
             get => _Inzidenzen;
             set => SetField(ref _Inzidenzen, value);
