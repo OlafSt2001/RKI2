@@ -24,10 +24,10 @@ namespace RKI2.ViewModels
 
         private int MaxKreisId;
 
-        //Für Legende
-        private const int MAX_LEGEND_COUNT = 12;
-        private SolidColorBrush br = new (Color.FromArgb(0xFF, 0xB0, 0, 0));
-        private readonly List<SolidColorBrush> LegendColors;
+        //Für Legende - alles verschoben nach Klasse Legend
+        //private const int MAX_LEGEND_COUNT = 12;
+        //private SolidColorBrush br = new (Color.FromArgb(0xFF, 0xB0, 0, 0));
+        //private readonly List<SolidColorBrush> LegendColors;
 
         //Handler für unseren Button
         public DelegateCommand LoadData { get; private set; }
@@ -131,53 +131,24 @@ namespace RKI2.ViewModels
             MaxKreisId = KreisData.VisualizeData.Max(dr => dr.Id);
             //Legendenfarben intialisieren. Wegen einer benutzerdefinierten Farbe können wir das nicht in der
             //Deklaration machen, der Compiler weigert sich standhaft
-            LegendColors = new List<SolidColorBrush>(MAX_LEGEND_COUNT)
-            {
-                Brushes.Green,
-                Brushes.GreenYellow,
-                Brushes.BurlyWood,
-                Brushes.Silver,
-                Brushes.SlateGray,
-                Brushes.PeachPuff,
-                Brushes.Coral,
-                Brushes.Red,
-                br,
-                Brushes.DarkRed,
-                Brushes.DarkOrchid,
-                Brushes.DarkSlateBlue
-            };
+            //LegendColors = new List<SolidColorBrush>(MAX_LEGEND_COUNT)
+            //{
+            //    Brushes.Green,
+            //    Brushes.GreenYellow,
+            //    Brushes.BurlyWood,
+            //    Brushes.Silver,
+            //    Brushes.SlateGray,
+            //    Brushes.PeachPuff,
+            //    Brushes.Coral,
+            //    Brushes.Red,
+            //    br,
+            //    Brushes.DarkRed,
+            //    Brushes.DarkOrchid,
+            //    Brushes.DarkSlateBlue
+            //};
             SetupFullInzidenzData();
         }
 
-        private LegendItem CreateLegendItem(double MinVal, double MaxVal, int ColorIndex)
-        {
-            return new LegendItem
-            {
-                InzidenzMin = MinVal,
-                InzidenzMax = MaxVal,
-                InzidenzColor = LegendColors[ColorIndex],
-                InzidenzRangeText = $"{MinVal:F0}...{MaxVal:F0}"
-            };
-        }
-        private void CalculateLegend(double MinVal, double MaxVal, bool IsSingleLegendItem = false)
-        {
-            //Lineare Verteilung
-            var liList = new List<LegendItem>();
-
-            if (IsSingleLegendItem)
-                liList.Add(CreateLegendItem(MinVal, MaxVal, 0));
-            else
-            {
-                var step = (MaxVal - MinVal) / (double)MAX_LEGEND_COUNT;
-                for (var i = 0; i < MAX_LEGEND_COUNT; i++)
-                {
-
-                    var li = CreateLegendItem(i * step, (i + 1) * step, i);
-                    liList.Add(li);
-                }
-            }
-            Inzidenzen = liList;
-        }
 
         private void SetupFullInzidenzData()
         {
@@ -185,7 +156,7 @@ namespace RKI2.ViewModels
             double finalMaxVal = double.MinValue;
             for (int i = MinKreisId; i < MaxKreisId; i++)
                 (finalMinVal, finalMaxVal) = GetFinalMinMaxVal(i, finalMinVal, finalMaxVal);
-            CalculateLegend(finalMinVal, finalMaxVal);
+            Inzidenzen = Legend.CalculateLegend(finalMinVal, finalMaxVal);
         }
 
         private (double minVal, double maxVal) GetFinalMinMaxVal(int KreisId, double finalMinVal, double finalMaxVal)
@@ -214,7 +185,7 @@ namespace RKI2.ViewModels
                 for (var i = KreisIds.Min(KRID => KRID); i < KreisIds.Max(KRID => KRID); i++)
                     (finalMinVal, finalMaxVal) = GetFinalMinMaxVal(i, finalMinVal, finalMaxVal);
 
-            CalculateLegend(finalMinVal, finalMaxVal);
+            Inzidenzen = Legend.CalculateLegend(finalMinVal, finalMaxVal);
         }
         #endregion
 
