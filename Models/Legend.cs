@@ -47,7 +47,7 @@ namespace RKI2.Models
                 for (var i = 0; i < MAX_LEGEND_COUNT; i++)
                 {
 
-                    var li = CreateLegendItem(i * step, (i + 1) * step, i);
+                    var li = CreateLegendItem(i * step + minVal, (i + 1) * step + minVal, i);
                     liList.Add(li);
                 }
             }

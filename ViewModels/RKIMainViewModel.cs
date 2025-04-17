@@ -163,7 +163,7 @@ namespace RKI2.ViewModels
         {
             (double minV, double maxV) = KreisData.GetMinMaxValueForKreis(KreisId);
             if (double.IsNaN(minV))
-                return (double.MinValue, double.MaxValue);
+                return (double.MaxValue, double.MinValue);
             if (minV < finalMinVal)
                 finalMinVal = minV;
             if (maxV > finalMaxVal)
