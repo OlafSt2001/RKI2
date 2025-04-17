@@ -1,8 +1,6 @@
 ﻿using System.ComponentModel;
-using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Media;
 using DataDLLInterfaces;
 using GeoDataDLL;
 using InzidenzDataDLL;
@@ -202,11 +200,10 @@ namespace RKI2.ViewModels
         {
             _LandkreisData.Clear();
             if (bundeslandIndex == 0)
-            {
                 //(kein) ausgewählt
                 //Deutschlandkarte zeichnen
                 return;
-            }
+
             _LandkreisData.Add("(kein)");
             var p = GeoData.GetAllKreisForBundesland(bundeslandIndex);
             p.ForEach(kr => _LandkreisData.Add(kr.KreisName));
@@ -236,6 +233,8 @@ namespace RKI2.ViewModels
             GeoData.GetAllBundesland().ForEach(br => _BundeslandData.Add(br.BundeslandName));
             //Get MinMaxIds for Kreise
             GetMinMaxKreisID();
+            //Legende neu aufbauen
+            SetupFullInzidenzData();
             //Tell everyone that this prop has changed
             OnPropertyChanged(nameof(BundeslandData));
             //Tell everyone that we have data
