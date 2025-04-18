@@ -2,12 +2,12 @@
 
 namespace RKI2.Models
 {
-    public class Legend
+    public static class Legend
     {
         public const int MAX_LEGEND_COUNT = 12;
         private static readonly SolidColorBrush br = new(Color.FromArgb(0xFF, 0xB0, 0, 0));
 
-        public static List<SolidColorBrush> LegendColors =
+        public static readonly List<SolidColorBrush> LegendColors =
         [
             Brushes.Green,
             Brushes.GreenYellow,
@@ -23,6 +23,28 @@ namespace RKI2.Models
             Brushes.DarkSlateBlue
         ];
 
+        public static List<LegendItem> CalculateLegend(double minVal, double maxVal, bool isSingleLegendItem = false)
+        {
+            //Lineare Verteilung
+            var liList = new List<LegendItem>();
+
+            if (isSingleLegendItem)
+            {
+                liList.Add(CreateLegendItem(minVal, maxVal, 0));
+                return liList;
+            }
+
+            var step = (maxVal - minVal) / (double)MAX_LEGEND_COUNT;
+            for (var i = 0; i < MAX_LEGEND_COUNT; i++)
+            {
+
+                var li = CreateLegendItem(i * step + minVal, (i + 1) * step + minVal, i);
+                liList.Add(li);
+            }
+
+            return liList;
+        }
+
         private static LegendItem CreateLegendItem(double minVal, double maxVal, int colorIndex)
         {
             return new LegendItem
@@ -32,27 +54,6 @@ namespace RKI2.Models
                 InzidenzColor = LegendColors[colorIndex],
                 InzidenzRangeText = $"{minVal:F0}...{maxVal:F0}"
             };
-        }
-        
-        public static List<LegendItem> CalculateLegend(double minVal, double maxVal, bool isSingleLegendItem = false)
-        {
-            //Lineare Verteilung
-            var liList = new List<LegendItem>();
-
-            if (isSingleLegendItem)
-                liList.Add(CreateLegendItem(minVal, maxVal, 0));
-            else
-            {
-                var step = (maxVal - minVal) / (double)MAX_LEGEND_COUNT;
-                for (var i = 0; i < MAX_LEGEND_COUNT; i++)
-                {
-
-                    var li = CreateLegendItem(i * step + minVal, (i + 1) * step + minVal, i);
-                    liList.Add(li);
-                }
-            }
-
-            return liList;
         }
 
     }
