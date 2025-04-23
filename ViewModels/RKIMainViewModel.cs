@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Media;
 using DataDLLInterfaces;
 using GeoDataDLL;
 using InzidenzDataDLL;
@@ -183,7 +185,7 @@ namespace RKI2.ViewModels
                 for (var i = KreisIds.Min(KRID => KRID); i < KreisIds.Max(KRID => KRID); i++)
                     (finalMinVal, finalMaxVal) = GetFinalMinMaxVal(i, finalMinVal, finalMaxVal);
 
-            Inzidenzen = Legend.CalculateLegend(finalMinVal, finalMaxVal);
+            Inzidenzen = Legend.CalculateLegend(finalMinVal, finalMaxVal, KreisIds.Count == 1);
         }
         #endregion
 
@@ -273,6 +275,159 @@ namespace RKI2.ViewModels
         {
             //Not yet implemented
         }
+
+        /*
+         Was brauchen wir ?
+
+        1. Nördlichste Koordinate
+        2. Südlichste Kordinate
+        3. Westlichste Koordinate
+        4. Östlichste Koordinate
+
+        5. Diese Umwandeln in Bildschirmkoordinaten (Top, Bottom, Left, Right)
+        6. Skalieren, das die berechnet Box gut passt (Aspect Ratio beibehalten)
+        7. Jede Koordinate nun mit Skalierung in Bildschirmkoordinate wandeln
+        8. Pixel setzen
+        9. Floodfill mit Inziodenzfarbe
+        */
+        #endregion
+        #region Old drawing methods
+        /*
+        private Point ScaleCoordToPoint(float Lat, float Long)
+        {
+            Point result = new()
+            {
+                X = (Lat - mmc.minLat) / ScaleHorizontal,
+                Y = TheCanvas.ActualHeight - ((Long - mmc.minLong) / ScaleVertical)
+            };
+
+            return result;
+
+        }
+
+        private void DrawElement(float[][][] data, double Inzidenz, string KreisName = "")
+        {
+            //Und los gehts mit Zeichnen
+            //List<PathFigure> li = new();
+
+            for (int areaCount = 0; areaCount < data.Length; areaCount++)
+            {
+
+                PathGeometry pg = new();
+
+                //Startpunkt ermitteln
+                Point startPoint = ScaleCoordToPoint(data[areaCount][0][0], data[areaCount][0][1]);
+                PointsDrawn++;
+
+                //PathGeometry zeichnen
+                PathFigure path = new()
+                {
+                    StartPoint = startPoint
+                };
+
+                //Anpassung für Granularität
+                //for (int coordCount = 1; coordCount < data[areaCount].Length; coordCount++)
+                for (int coordCount = 1; coordCount < data[areaCount].Length; coordCount += Granularity)
+                {
+                    Point pt = ScaleCoordToPoint(data[areaCount][coordCount][0], data[areaCount][coordCount][1]);
+                    PointsDrawn++;
+                    path.Segments.Add(new LineSegment(pt, true));
+                }
+                pg.Figures.Add(path);
+
+                System.Windows.Shapes.Path p = new()
+                {
+                    Stroke = Brushes.Black,
+                    StrokeThickness = 1,
+                    Fill = GetInzidenzColor(Inzidenz),//Brushes.AliceBlue;  //FillColor hier
+                    Data = pg,
+                    Tag = KreisName
+                };
+
+                p.MouseEnter += AreaEnter;
+                p.MouseLeave += AreaLeave;
+                //Trigger hier anklemmen
+                TheCanvas.Children.Add(p);
+            }
+        }
+
+        private async Task DrawKreis(string KreisName, bool withRescale = true)
+        {
+            var t = await Rootobject2.GetCountyAreaAsync(json2, KreisName);
+
+            if (withRescale)
+            {
+                Rootobject2.FindMinMaxCoords(t, mmc);
+                ReScale();
+            }
+            double Inzidenz = await Rootobject2.GetCountyInzidenzAsync(json2, KreisName);
+            DrawElement(t, Inzidenz, KreisName);
+
+        }
+
+        private async Task DrawBundesland(int BundeslandID, CancellationToken ct)
+        {
+            //Not yet implemented
+            //Finde heraus, wie man an die Dimensionen des Bundeslandes kommt
+            //Diese braucht man für das Rescale
+            //Dann alle Landkreise zeichnen -> ergibt das komplette Bundesland
+            List<double> InzList = new();
+            //Landkreise zeichnen
+
+            List<string> li = await Rootobject2.GetAllKreiseAsync(JSonAsList, BundeslandID + 1);
+            mmc.Reset();
+
+            foreach (var krName in li)
+            {
+                if (ct.IsCancellationRequested)
+                    return;
+
+                var t1 = Rootobject2.GetCountyAreaAsync(json2, krName);
+                var t2 = Rootobject2.GetCountyInzidenzAsync(json2, krName);
+                Task.WaitAll(new Task[] { t1, t2 }, cancellationToken: ct);
+
+                float[][][] f = t1.Result;
+                double Inzidenz = t2.Result;
+                //float[][][] f = await Rootobject2.GetCountyAreaAsync(json2, krName);
+                ////Inzidenz für den Kreis hier auch gleich ermitteln und ab in ne Liste
+                //double Inzidenz = await Rootobject2.GetCountyInzidenzAsync(json2, krName);
+                InzList.Add(Inzidenz);
+                //Dann verteilen auf die Liste mit Inzidenzen
+                mmc = Rootobject2.FindMinMaxCoords(f, mmc);
+            }
+            ReScale();
+            InzList.Sort();
+            InzList.ForEach(d => Debug.Print($"Inz = {d}"));
+            //Debug.Print(InzList.ToString);
+            foreach (var krName in li)
+            {
+                if (ct.IsCancellationRequested)
+                    return;
+                await DrawKreis(krName, false);
+            }
+        }
+
+        private void ReScale(Size e)
+        {
+            double d = mmc.maxLat - mmc.minLat;
+            ScaleHorizontal = d / e.Width;
+
+            d = mmc.maxLong - mmc.minLong;
+            ScaleVertical = d / e.Height;
+
+        }
+
+        private void ReScale()
+        {
+            Size e = new()
+            {
+                Width = TheCanvas.ActualWidth,
+                Height = TheCanvas.ActualHeight
+            };
+            ReScale(e);
+
+        }
+        */
         #endregion
 
         #region  Implementation INotifyPropertyChanged

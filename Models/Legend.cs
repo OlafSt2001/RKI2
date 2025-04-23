@@ -52,7 +52,7 @@ namespace RKI2.Models
                 InzidenzMin = minVal,
                 InzidenzMax = maxVal,
                 InzidenzColor = LegendColors[colorIndex],
-                InzidenzRangeText = $"{minVal:F0}...{maxVal:F0}"
+                InzidenzRangeText = minVal != maxVal ? $"{minVal:F0}...{maxVal:F0}" : $"{minVal:F0}",
             };
         }
 
