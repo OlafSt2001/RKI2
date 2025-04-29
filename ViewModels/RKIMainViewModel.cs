@@ -1,13 +1,10 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Media;
-using DataDLLInterfaces;
+﻿using DataDLLInterfaces;
 using GeoDataDLL;
 using InzidenzDataDLL;
 using RKI2.Models;
-//using BundeslandRecord = DataDLLInterfaces.BundeslandRecord;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace RKI2.ViewModels
 {
@@ -44,7 +41,7 @@ namespace RKI2.ViewModels
             get => _BundeslandData;
             set => SetField(ref _BundeslandData, value);
         }
-            
+
         private string SelectedBundeslandItemItem;
         public string SelectedBundeslandItem
         {
@@ -105,9 +102,9 @@ namespace RKI2.ViewModels
         #endregion
 
         #region Constructor
-        #pragma warning disable CS8618
+#pragma warning disable CS8618
         public RKIMainViewModel()
-        #pragma warning restore CS8618
+#pragma warning restore CS8618
         {
             SetupButtonHandlers();
 
@@ -181,7 +178,7 @@ namespace RKI2.ViewModels
             if (KreisIds.Count() == 1)
                 (finalMinVal, finalMaxVal) = GetFinalMinMaxVal(KreisIds[0], finalMinVal, finalMaxVal);
             else
-            //Ansonsten halt über alle Kreise
+                //Ansonsten halt über alle Kreise
                 for (var i = KreisIds.Min(KRID => KRID); i < KreisIds.Max(KRID => KRID); i++)
                     (finalMinVal, finalMaxVal) = GetFinalMinMaxVal(i, finalMinVal, finalMaxVal);
 
@@ -190,13 +187,13 @@ namespace RKI2.ViewModels
         #endregion
 
         private void GetMinMaxKreisID()
-            {
-                var BL = GeoData.GetAllBundesland();
-                int MaxBLID = BL.Select(br => br.BundeslandId).Max();
-                int MinBLID = BL.Select(br => br.BundeslandId).Min();
-                MinKreisId = GeoData.GetAllKreisForBundesland(MinBLID).Select(kr => kr.KreisId).Min();
-                MaxKreisId = GeoData.GetAllKreisForBundesland(MaxBLID).Select(kr => kr.KreisId).Max();
-            }
+        {
+            var BL = GeoData.GetAllBundesland();
+            int MaxBLID = BL.Select(br => br.BundeslandId).Max();
+            int MinBLID = BL.Select(br => br.BundeslandId).Min();
+            MinKreisId = GeoData.GetAllKreisForBundesland(MinBLID).Select(kr => kr.KreisId).Min();
+            MaxKreisId = GeoData.GetAllKreisForBundesland(MaxBLID).Select(kr => kr.KreisId).Max();
+        }
 
         private void FillLandkreisCombo(int bundeslandIndex)
         {
@@ -226,7 +223,7 @@ namespace RKI2.ViewModels
 
         private void LoadGeoData()
         {
-            if (DataLoaded) 
+            if (DataLoaded)
                 return;
 
             GeoData.LoadGeoData(@"D:\VC#\RKIConv\bin\Debug\net8.0");
@@ -440,7 +437,7 @@ namespace RKI2.ViewModels
         private bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             //Hat sich wirklich was geändert ? Wenn nicht, dann gleich wieder raus hier
-            if (EqualityComparer<T>.Default.Equals(field, value)) 
+            if (EqualityComparer<T>.Default.Equals(field, value))
                 return false;
 
             //Wert eintragen und PropertyChanged auslösen
