@@ -198,6 +198,8 @@ namespace RKI2.ViewModels
         private void FillLandkreisCombo(int bundeslandIndex)
         {
             _LandkreisData.Clear();
+            SelectedLandKreisIndex = -1;
+
             if (bundeslandIndex == 0)
                 //(kein) ausgewählt
                 //Deutschlandkarte zeichnen
