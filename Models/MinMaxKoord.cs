@@ -107,12 +107,11 @@ namespace RKI2.Models
         public Point ScaleGPSCoord(double Lat, double Long)
         {
             GPSKoord gk = new(Lat, Long);
-            Point point = new Point();
 
-            if (ScreenCoordList.ContainsKey(gk))
-                return ScreenCoordList[gk];
+            if (ScreenCoordList.TryGetValue(gk, out Point point))
+                return point;
             //Calculate Screencoords
-
+            point = new Point();
             //Add to Dictionary
             return point;
         }
