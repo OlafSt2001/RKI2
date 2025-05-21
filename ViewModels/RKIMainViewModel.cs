@@ -26,6 +26,9 @@ namespace RKI2.ViewModels
         //private SolidColorBrush br = new (Color.FromArgb(0xFF, 0xB0, 0, 0));
         //private readonly List<SolidColorBrush> LegendColors;
 
+        //Skalierung zum Zeichnen der Map
+        private MinMaxKoord minMaxKoord;
+
         //Handler für unseren Button
         public DelegateCommand LoadData { get; private set; }
         public DelegateCommand ExitCommand { get; private set; }
@@ -101,6 +104,19 @@ namespace RKI2.ViewModels
         }
         #endregion
 
+        #region Zeichenfläche Größenproperty
+        private Size _canvasSize;
+        public Size CanvasSize
+        {
+            get => _canvasSize;
+            set 
+            {
+                minMaxKoord?.SetRect(value);
+                SetField(ref _canvasSize, value);
+            }
+        }
+        #endregion
+
         #region Constructor
 #pragma warning disable CS8618
         public RKIMainViewModel()
@@ -144,6 +160,11 @@ namespace RKI2.ViewModels
             //    Brushes.DarkSlateBlue
             //};
             SetupFullInzidenzData();
+            //Vorbereitung für Skalierung
+            minMaxKoord = new MinMaxKoord();
+            //Das Rect wird über den SizeObserver gesetzt. Wir füllen jetzt die Geokoordinaten ein
+
+            
         }
 
 

@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:RKI2"
         xmlns:uc="clr-namespace:RKI2.UserControls" 
         xmlns:viewmodels="clr-namespace:RKI2.ViewModels" 
+        xmlns:models="clr-namespace:RKI2.Models"
         d:DataContext="{d:DesignInstance viewmodels:RKIMainViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
         Title="MainWindow" Height="580" Width="800">
@@ -44,16 +45,18 @@
         </uc:UC_RKISelector>
         <!-- Hier kommt unsere Legende -->
         <StackPanel Grid.Row="3" Margin="1,5,1,1">
-        <Label Grid.Row="3" Content="Legende"></Label>
-        <ListView Grid.Row="3" ItemsSource="{Binding Inzidenzen}" HorizontalContentAlignment="Stretch" SelectionMode="Single">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock HorizontalAlignment="Stretch" Text="{Binding InzidenzRangeText}" Background="{Binding InzidenzColor}" FontSize="16"/>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            <Label Grid.Row="3" Content="Legende"></Label>
+            <ListView Grid.Row="3" ItemsSource="{Binding Inzidenzen}" HorizontalContentAlignment="Stretch" SelectionMode="Single">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock HorizontalAlignment="Stretch" Text="{Binding InzidenzRangeText}" Background="{Binding InzidenzColor}" FontSize="16"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackPanel>
-        <Canvas Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" Background="Aquamarine"></Canvas>
-
+        <Canvas Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" Background="Aquamarine"
+                models:SizeObserver.Observe="True"
+                models:SizeObserver.ObservedSize="{Binding CanvasSize, Mode=OneWayToSource}"></Canvas>
     </Grid>
 </Window>
+    
