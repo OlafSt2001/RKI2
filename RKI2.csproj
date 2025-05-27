@@ -11,11 +11,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="DataDLLInterfaces">
+      <HintPath>..\DataDLLInterfaces\bin\Release\net9.0\DataDLLInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="GeoDataDLL">
-      <HintPath>..\GeoDataDLL\bin\Any CPU\Debug\net8.0\GeoDataDLL.dll</HintPath>
+      <HintPath>..\GeoDataDLL\bin\Debug\net9.0\GeoDataDLL.dll</HintPath>
     </Reference>
     <Reference Include="InzidenzDataDLL">
-      <HintPath>..\InzidenDataDLL\bin\Debug\net8.0\InzidenzDataDLL.dll</HintPath>
+      <HintPath>..\InzidenDataDLL\bin\Debug\net9.0\InzidenzDataDLL.dll</HintPath>
     </Reference>
   </ItemGroup>
 

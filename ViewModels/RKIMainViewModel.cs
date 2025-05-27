@@ -11,7 +11,7 @@ namespace RKI2.ViewModels
     public class RKIMainViewModel : INotifyPropertyChanged
     {
         private readonly GeoData GeoData;
-        private readonly IDataLoader DataLoader;
+        private readonly IGeoDataLoader DataLoader;
 
         private bool DataLoaded;
 
@@ -127,6 +127,7 @@ namespace RKI2.ViewModels
             //Setup Map Data and Bundesland- and KreisData
             DataLoader = new GeoDataLoader();
             GeoData = new GeoData(DataLoader);
+            GeoData.LoadGeoData(@"D:\VC#\RKI_MVVM\GeoDataDLL\Data");
             _BundeslandData = Enumerable.Empty<string>().ToList();
             _BundeslandData.Add("(kein)");
             _SelectedBundeslandIndex = -1;
@@ -163,7 +164,13 @@ namespace RKI2.ViewModels
             //Vorbereitung für Skalierung
             minMaxKoord = new MinMaxKoord();
             //Das Rect wird über den SizeObserver gesetzt. Wir füllen jetzt die Geokoordinaten ein
-
+            //Da wir gerade starten, halt für ganz Deutschland
+            List<CountyKoord> li = GeoData.GetAllKoords();
+            foreach(var item in li)
+                minMaxKoord.AddGPS(item.Latitude, item.Longitude, IsBulk:true);
+            //Da wir mit IsBulk massenhaft Koords hinzugefügt haben, ist MinMaxGPS nicht gelaufen
+            //Das müssen wir nun manuell nachholen
+            minMaxKoord.UpdateMinMaxGPS();
             
         }
 

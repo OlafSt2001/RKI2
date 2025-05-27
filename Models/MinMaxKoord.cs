@@ -82,25 +82,25 @@ namespace RKI2.Models
         #endregion
 
         #region Methods for GPS-Coordinates
-        public void AddGPS(double Latitude, double Longitude)
+        public void AddGPS(double Latitude, double Longitude, bool IsBulk=false)
         {
             KoordList.Add(new GPSKoord(Latitude, Longitude));
-            UpdateMinMaxGPS();
+            if (!IsBulk) 
+                UpdateMinMaxGPS();
         }
 
-        public void AddGPS(GPSKoord gk)
+        public void AddGPS(GPSKoord gk, bool IsBulk=false)
         {
             KoordList.Add(gk);
-            UpdateMinMaxGPS();
+
+            if (!IsBulk)
+                UpdateMinMaxGPS();
         }
 
         public void ClearGPS() => KoordList.Clear();
 
-        private void UpdateMinMaxGPS()
+        public void UpdateMinMaxGPS()
         {
-            if (!IsScreenRectSet)
-                throw new InvalidOperationException("ScreenRect not set !");
-
             MinLAT = MinLONG = double.MaxValue;
             MaxLAT = MaxLONG = double.MinValue;
 
@@ -123,8 +123,11 @@ namespace RKI2.Models
             //Höhe und Breite des gesamten GPS-Rects ermitteln
             HorizontalGPSSize = MaxLAT - MinLAT;
             VerticalGPSSize = MaxLONG - MinLONG;
-            OneHorizontalGpsPixel = HorizontalGPSSize / CanvasRect.Width;
-            OneVerticalGpsPixel = VerticalGPSSize / CanvasRect.Height;
+            if (IsScreenRectSet)
+            {
+                OneHorizontalGpsPixel = HorizontalGPSSize / CanvasRect.Width;
+                OneVerticalGpsPixel = VerticalGPSSize / CanvasRect.Height;
+            }
         }
 
         #endregion
