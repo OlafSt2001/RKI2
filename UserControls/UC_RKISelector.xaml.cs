@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Animation;
 
 namespace RKI2.UserControls
 {
@@ -21,7 +19,7 @@ namespace RKI2.UserControls
             //Auf keinen Fall so (Also das Control direkt ansprechen) machen !
             //RKISelectorLabel.Content = value;
         }
-        public static readonly DependencyProperty CaptionProperty = DependencyProperty.Register(nameof(LabelCap), 
+        public static readonly DependencyProperty CaptionProperty = DependencyProperty.Register(nameof(LabelCap),
             typeof(string), typeof(UC_RKISelector));
         #endregion
 
@@ -35,7 +33,7 @@ namespace RKI2.UserControls
             set => SetField(ref _ItemList, value);
         }
 
-        public static readonly DependencyProperty ItemListProperty = DependencyProperty.Register(nameof(ItemList), 
+        public static readonly DependencyProperty ItemListProperty = DependencyProperty.Register(nameof(ItemList),
             typeof(IEnumerable<string>), typeof(UC_RKISelector));
 
         //SelectedItem
@@ -77,7 +75,7 @@ namespace RKI2.UserControls
             var cb = d as ComboBox;
             cb?.SetValue(e.Property, (int)e.NewValue);
         }
-        
+
         #endregion
 
         public UC_RKISelector()

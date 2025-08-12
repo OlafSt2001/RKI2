@@ -22,6 +22,7 @@ namespace RKI2.ViewModels
         private int MaxKreisId;
 
         //Für Legende - alles verschoben nach Klasse Legend
+
         //private const int MAX_LEGEND_COUNT = 12;
         //private SolidColorBrush br = new (Color.FromArgb(0xFF, 0xB0, 0, 0));
         //private readonly List<SolidColorBrush> LegendColors;
@@ -62,6 +63,15 @@ namespace RKI2.ViewModels
             get => _SelectedBundeslandIndex;
             set
             {
+                if (value < 1)
+                {
+                    //Wenn (kein) ausgewählt, dann zeichnen wir die Deutschlandkarte
+                    _SelectedLandkreisIndex = 0;
+                    SelectedLandKreisIndex = 0;
+                    OnPropertyChanged(nameof(LandkreisData));
+                    DrawMap(-1, -1);
+                    return;
+                }
                 SetField(ref _SelectedBundeslandIndex, value);
                 //Oder hier mehr Zeuh für Landkreis-Combo
                 FillLandkreisCombo(_SelectedBundeslandIndex);
@@ -84,6 +94,9 @@ namespace RKI2.ViewModels
                 //Landkreis zeichnen. Achtung: Durch das eingefügte (kein) muss vom Index
                 //eins abgezogen werden, um den korrekten Index in LandkreisData-List zu
                 //bekommen !
+                SetupKreisInzidenzData(value - 1);
+                OnPropertyChanged(nameof(Inzidenzen));
+                DrawMap(_SelectedBundeslandIndex, value - 1);
             }
         }
 
@@ -127,7 +140,7 @@ namespace RKI2.ViewModels
             //Setup Map Data and Bundesland- and KreisData
             DataLoader = new GeoDataLoader();
             GeoData = new GeoData(DataLoader);
-            GeoData.LoadGeoData(@"D:\VC#\RKI_MVVM\GeoDataDLL\Data");
+            //GeoData.LoadGeoData(@"D:\VC#\RKI_MVVM\GeoDataDLL\Data");
             _BundeslandData = Enumerable.Empty<string>().ToList();
             _BundeslandData.Add("(kein)");
             _SelectedBundeslandIndex = -1;
@@ -198,6 +211,11 @@ namespace RKI2.ViewModels
 
         private void SetupBundeslandInzidenzData(int BLID)
         {
+            if (BLID < 0)
+            {
+                SetupFullInzidenzData();
+                return;
+            }
             var p = GeoData.GetAllKreisForBundesland(BLID);
             var KreisIds = p.Select(kr => kr.KreisId).ToList();
             double finalMinVal = double.MaxValue;
@@ -205,12 +223,26 @@ namespace RKI2.ViewModels
             //Wenn wir nur einen Landkreis haben (HH z.B.) dann direkt berechnen
             if (KreisIds.Count() == 1)
                 (finalMinVal, finalMaxVal) = GetFinalMinMaxVal(KreisIds[0], finalMinVal, finalMaxVal);
+
             else
                 //Ansonsten halt über alle Kreise
                 for (var i = KreisIds.Min(KRID => KRID); i < KreisIds.Max(KRID => KRID); i++)
                     (finalMinVal, finalMaxVal) = GetFinalMinMaxVal(i, finalMinVal, finalMaxVal);
 
             Inzidenzen = Legend.CalculateLegend(finalMinVal, finalMaxVal, KreisIds.Count == 1);
+        }
+
+        private void SetupKreisInzidenzData(int KreisIndex)
+        {
+            if (KreisIndex < 0)
+            {
+                //Kein Kreis ausgewählt, also Bundesland anzeigen
+                SetupBundeslandInzidenzData(SelectedBundeslandIndex);
+                return; 
+            }
+            int KreisId = GeoData.GetAllKreisForBundesland(SelectedBundeslandIndex)[KreisIndex].KreisId;
+            (double minVal, double maxVal) = KreisData.GetMinMaxValueForKreis(KreisId);
+            Inzidenzen = Legend.CalculateLegend(minVal, maxVal, true);
         }
         #endregion
 
